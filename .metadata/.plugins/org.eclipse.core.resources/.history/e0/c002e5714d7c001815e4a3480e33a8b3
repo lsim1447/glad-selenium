@@ -1,0 +1,67 @@
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+
+public class Gladiatus {
+
+	public static void main(String[] args) {
+		System.setProperty("webdriver.gecko.driver","E:\\sss\\geckodriver.exe");
+		WebDriver driver = new FirefoxDriver();
+		JavascriptExecutor jse = (JavascriptExecutor) driver;
+		
+		driver.get("https://s22-hu.gladiatus.gameforge.com/game/index.php?mod=overview&sh=6896d257ed43e2c0592d8a235b522c9a");
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		
+		String previousURL = driver.getCurrentUrl();
+		//login
+		WebElement username = driver.findElement(By.id("login_username"));
+		username.sendKeys("Messi");
+		WebElement password = driver.findElement(By.id("login_password"));
+		password.sendKeys("barca4ever");
+		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+		
+		jse.executeScript("document.getElementById('loginsubmit').click();");
+		
+		
+		//
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Actions actions = new Actions(driver);
+		actions.keyDown(Keys.CONTROL).sendKeys(Keys.F5).perform();
+		String currentURL = driver.getCurrentUrl();
+		driver.get(currentURL);
+		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+		
+		//jse.executeScript("document.getElementById('cooldown_bar_text_ct').click();");
+		List<WebElement> elements = driver.findElements(By.className("cooldown_bar_link"));
+		// 1- expedition   2- kazamata   -3 circus   -4 arena
+		
+		boolean oke = true;
+		while (oke) {
+			elements.get(3).click();
+			driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+			List<WebElement> opponents = driver.findElements(By.className("attack"));
+			opponents.get(1).click();
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			actions.keyDown(Keys.CONTROL).sendKeys(Keys.F5).perform();
+			driver.get(driver.getCurrentUrl());
+			driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+		}
+	}
+
+}
